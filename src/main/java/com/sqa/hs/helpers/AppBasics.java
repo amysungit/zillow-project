@@ -38,7 +38,7 @@ public class AppBasics {
 	public static boolean requestBoolean(String question) {
 		String input;
 		boolean bool = true;
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		input = scanner.nextLine();
 		try {
 			bool = Boolean.parseBoolean(input.trim());
@@ -56,7 +56,7 @@ public class AppBasics {
 	 */
 	public static char requestChar(String question) {
 		char c;
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		c = scanner.nextLine().charAt(0);
 		return c;
 	}
@@ -68,7 +68,7 @@ public class AppBasics {
 	public static double requestDouble(String question) {
 		String input;
 		double count = 0;
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		input = scanner.nextLine();
 		try {
 			count = Double.parseDouble(input.trim());
@@ -87,7 +87,7 @@ public class AppBasics {
 	public static float requestFloat(String question) {
 		String input;
 		float count = 0;
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		input = scanner.nextLine();
 		try {
 			count = Float.parseFloat(input.trim());
@@ -123,7 +123,7 @@ public class AppBasics {
 	public static long requestLong(String question) {
 		String input;
 		long count = 0;
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		input = scanner.nextLine();
 		try {
 			count = Long.parseLong(input.trim());
@@ -141,7 +141,7 @@ public class AppBasics {
 	public static short requestShort(String question) {
 		String input;
 		short count = 0;
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		input = scanner.nextLine();
 		// short number = scanner.nextShort();
 		try {
@@ -158,7 +158,7 @@ public class AppBasics {
 	 * @return a string
 	 */
 	public static String requestString(String question) {
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		return scanner.nextLine();
 	}
 
