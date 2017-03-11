@@ -105,7 +105,7 @@ public class AppBasics {
 	public static int requestInt(String question) {
 		String input;
 		int count = 0;
-		System.out.println(question + " ");
+		System.out.print(question + " ");
 		input = scanner.nextLine();
 		try {
 			count = Integer.parseInt(input.trim());
