@@ -9,6 +9,8 @@
 * TestNG
 * log4j
 * Selenium WebDriver
+* Apache POI
+* mySQL
 
 Java Project for SQA Boot Camp Program. 
 
