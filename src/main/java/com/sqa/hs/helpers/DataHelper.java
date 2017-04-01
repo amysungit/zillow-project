@@ -35,7 +35,8 @@ public class DataHelper {
 	 */
 	public static String displayData(Object[][] data) {
 		StringBuilder sb = new StringBuilder();
-		// TODO Create two loops, one within another to add all items to sb.
+		// TODO Create two loops, one within another to add
+		// all items to sb.
 		// sb.append(data[i][0]);
 		for (int i = 0; i < data.length; i++) {
 			for (int j = 0; j < data[i].length; j++) {
@@ -64,8 +65,10 @@ public class DataHelper {
 	public static Object[][] evalDatabaseTable(String driverClassString, String databaseStringUrl, String username,
 			String password, String tableName) throws ClassNotFoundException, SQLException, DataTypesMismatchException,
 			DataTypesCountException, DataTypesTypeException {
-		// Method calls overloaded method which sets no offset for col or row in
-		// the case you wanted to offset your data retrieved based on a column
+		// Method calls overloaded method which sets no
+		// offset for col or row in
+		// the case you wanted to offset your data retrieved
+		// based on a column
 		// or row offset
 		return evalDatabaseTable(driverClassString, databaseStringUrl, username, password, tableName, 0, 0, null);
 	}
@@ -93,29 +96,37 @@ public class DataHelper {
 			String password, String tableName, int rowOffset, int colOffset, DataType[] dataTypes)
 			throws DataTypesMismatchException, ClassNotFoundException, SQLException, DataTypesCountException,
 			DataTypesTypeException {
-		// 2D Array of Objects to hold data object to be returned
+		// 2D Array of Objects to hold data object to be
+		// returned
 		Object[][] myData;
 		// Collection to hold same data
 		ArrayList<Object> myArrayData = new ArrayList<Object>();
 		// Driver class check, (requires driver dependency)
 		Class.forName(driverClassString);
-		// Create Connection and set value to the static method getConnection
+		// Create Connection and set value to the static
+		// method getConnection
 		// from DriverManager
 		Connection dbconn = DriverManager.getConnection(databaseStringUrl, username, password);
-		// Create Statement object and set its value to database connection by
+		// Create Statement object and set its value to
+		// database connection by
 		// calling createStatement instance method
 		Statement stmt = dbconn.createStatement();
-		// Create the ResultSet variable and set its value to the Statement
-		// object's instance method executeQuery with a supplied SQL select
+		// Create the ResultSet variable and set its value
+		// to the Statement
+		// object's instance method executeQuery with a
+		// supplied SQL select
 		// statement
 		ResultSet rs = stmt.executeQuery("select * from " + tableName);
-		// Create a int variable and set its value to the ResultSet object's
-		// instance method getColumnCount() from getMetaData().
+		// Create a int variable and set its value to the
+		// ResultSet object's
+		// instance method getColumnCount() from
+		// getMetaData().
 		// ResultSetMetaData rsmd = rs.getMetaData();
 		int numOfColumns = rs.getMetaData().getColumnCount();
 		// Check if any DataTypes are supplied
 		if (dataTypes != null) {
-			// Check that the number of DataTypes passed is equal to the number
+			// Check that the number of DataTypes passed is
+			// equal to the number
 			// columns in the database specified
 			if (dataTypes.length != numOfColumns) {
 				throw new DataTypesCountException();
@@ -127,23 +138,43 @@ public class DataHelper {
 		while (rs.next()) {
 			// Checking for rowOffset
 			if (curRow > rowOffset) {
-				// Gather row data based on columns collecting
+				// Gather row data based on columns
+				// collecting
 				Object[] rowData = new Object[numOfColumns - colOffset];
 				for (int i = 0, j = colOffset; i < rowData.length; i++) {
 					try {
-						// Based on DataType go to correct case
+						// Based on DataType go to correct
+						// case
 						switch (dataTypes[i]) {
-						// Convert to String if data from database data
+						// Convert to String if data from
+						// database data
 						case STRING:
 							rowData[i] = rs.getString(i + colOffset + 1);
 							break;
-						// Convert to int if data from database data
+						// Convert to int if data from
+						// database data
 						case INT:
 							rowData[i] = rs.getInt(i + colOffset + 1);
 							break;
-						// Convert to float if data from database data
-						case FLOAT:
-							rowData[i] = rs.getFloat(i + colOffset + 1);
+						// Convert to float if data from
+						// database data
+						case DOUBLE:
+							rowData[i] = rs.getDouble(i + colOffset + 1);
+							break;
+						// Convert to float if data from
+						// database data
+						case SHORT:
+							rowData[i] = rs.getShort(i + colOffset + 1);
+							break;
+						// Convert to float if data from
+						// database data
+						case BOOLEAN:
+							rowData[i] = rs.getBoolean(i + colOffset + 1);
+							break;
+						// Convert to float if data from
+						// database data
+						case LONG:
+							rowData[i] = rs.getLong(i + colOffset + 1);
 							break;
 						default:
 							break;
@@ -159,9 +190,11 @@ public class DataHelper {
 			// Increase row count
 			curRow++;
 		}
-		// Create array for first level based on items collected in collection
+		// Create array for first level based on items
+		// collected in collection
 		myData = new Object[myArrayData.size()][];
-		// Use a loop to iterate through array to add each row data as an array
+		// Use a loop to iterate through array to add each
+		// row data as an array
 		// (Creating the 2D Array needed)
 		for (int i = 0; i < myData.length; i++) {
 			// Adding the row data...
@@ -172,7 +205,8 @@ public class DataHelper {
 		rs.close();
 		stmt.close();
 		dbconn.close();
-		// Return data as arrays of the rows of arrays of columns data
+		// Return data as arrays of the rows of arrays of
+		// columns data
 		return myData;
 	}
 
@@ -188,31 +222,56 @@ public class DataHelper {
 	 */
 	public static Object[][] getExcelFileData(String fileLocation, String fileName, Boolean hasLabels)
 			throws InvalidExcelExtensionException {
+		return getExcelFileData(fileLocation, fileName, hasLabels, null);
+	}
+
+	/**
+	 * Method to read an excel file in both the old format of excel and the
+	 * newer one.
+	 *
+	 * @param fileLocation
+	 * @param fileName
+	 * @param hasLabels
+	 * @return
+	 * @throws InvalidExcelExtensionException
+	 */
+	public static Object[][] getExcelFileData(String fileLocation, String fileName, Boolean hasLabels,
+			DataType[] dataTypes) throws InvalidExcelExtensionException {
 		// Use a variable to store the 2D Object;
 		Object[][] resultsObject;
 		// Separate the file name from the exchange
 		String[] fileNameParts = fileName.split("[.]");
-		// Extension becomes last part of the file after the period
+		// Extension becomes last part of the file after the
+		// period
 		String extension = fileNameParts[fileNameParts.length - 1];
-		// Collection of results which will be set to a collection of rows in
+		// Collection of results which will be set to a
+		// collection of rows in
 		// the excel file
 		ArrayList<Object> results = null;
-		// Check for the extension to be xlsx or newer Excel 2003+
+		// Check for the extension to be xlsx or newer Excel
+		// 2003+
 		if (extension.equalsIgnoreCase("xlsx")) {
-			// Call method to get results from a new type for excel document
-			results = getNewExcelFileResults(fileLocation, fileName, hasLabels);
-			// Check for the extension to be xls or old Excel -2003
+			// Call method to get results from a new type
+			// for excel document
+			results = getNewExcelFileResults(fileLocation, fileName, hasLabels, dataTypes);
+			// Check for the extension to be xls or old
+			// Excel -2003
 		} else if (extension.equalsIgnoreCase("xls")) {
-			// Call method to get results from a old type for excel document
-			results = getOldExcelFileResults(fileLocation, fileName, hasLabels);
-			// if extension is not one of these, through exception
+			// Call method to get results from a old type
+			// for excel document
+			results = getOldExcelFileResults(fileLocation, fileName, hasLabels, dataTypes);
+			// if extension is not one of these, through
+			// exception
 		} else {
 			throw new InvalidExcelExtensionException();
 		}
-		// Set the results object to an array of arrays with size set to the
-		// amount of rows collected in results (the collection of rows)
+		// Set the results object to an array of arrays with
+		// size set to the
+		// amount of rows collected in results (the
+		// collection of rows)
 		resultsObject = new Object[results.size()][];
-		// Convert the results into the supplied array which is resultsObject
+		// Convert the results into the supplied array which
+		// is resultsObject
 		results.toArray(resultsObject);
 		// return the results object
 		return resultsObject;
@@ -305,7 +364,8 @@ public class DataHelper {
 	 * @return
 	 */
 	public static Object[][] joinData(Object[][] primaryArray, Object[][] joinArray) {
-		// Check for square Matrix and if not through an exception0
+		// Check for square Matrix and if not through an
+		// exception0
 		int totalDimX = primaryArray.length * joinArray.length;
 		int totalDimY = primaryArray[0].length + joinArray[0].length;
 		Object[][] data = new Object[totalDimX][totalDimY];
@@ -325,10 +385,11 @@ public class DataHelper {
 	 * @param results
 	 * @param workbook
 	 * @param sheet
+	 * @param dataTypes
 	 * @return
 	 */
 	private static ArrayList<Object> collectExcelData(Boolean hasLabels, InputStream newExcelFormatFile,
-			ArrayList<Object> results, Workbook workbook, Sheet sheet) {
+			ArrayList<Object> results, Workbook workbook, Sheet sheet, DataType[] dataTypes) {
 		try {
 			Iterator<Row> rowIterator = sheet.iterator();
 			if (hasLabels) {
@@ -338,27 +399,61 @@ public class DataHelper {
 				ArrayList<Object> rowData = new ArrayList<Object>();
 				Row row = rowIterator.next();
 				Iterator<Cell> cellIterator = row.cellIterator();
+				int curDataType = 0;
 				while (cellIterator.hasNext()) {
 					Cell cell = cellIterator.next();
-					switch (cell.getCellType()) {
-					case Cell.CELL_TYPE_BOOLEAN:
-						System.out.print(cell.getBooleanCellValue() + "\t\t\t");
-						rowData.add(cell.getBooleanCellValue());
-						break;
-					case Cell.CELL_TYPE_NUMERIC:
-						System.out.print(cell.getNumericCellValue() + "\t\t\t");
-						rowData.add(cell.getNumericCellValue());
-						break;
-					case Cell.CELL_TYPE_STRING:
-						System.out.print(cell.getStringCellValue() + "\t\t\t");
-						rowData.add(cell.getStringCellValue());
-						break;
+					// if (dataTypes != null) {
+					// // Check that the number of DataTypes
+					// passed is
+					// // equal to the number
+					// // columns in the database specified
+					// if (dataTypes.length != numOfColumns)
+					// {
+					// throw new DataTypesCountException();
+					// }
+					// }
+					if (dataTypes != null) {
+						switch (dataTypes[curDataType]) {
+						case BOOLEAN:
+							rowData.add(cell.getBooleanCellValue());
+							break;
+						case INT:
+							rowData.add((int) cell.getNumericCellValue());
+							break;
+						case DOUBLE:
+							rowData.add(cell.getNumericCellValue());
+							break;
+						case FLOAT:
+							rowData.add((float) cell.getNumericCellValue());
+							break;
+						case STRING:
+							rowData.add(cell.getStringCellValue());
+							break;
+						default:
+							rowData.add(cell.getStringCellValue());
+							break;
+						}
+						curDataType += 1;
+					} else {
+						switch (cell.getCellType()) {
+						case Cell.CELL_TYPE_BOOLEAN:
+							rowData.add(cell.getBooleanCellValue());
+							break;
+						case Cell.CELL_TYPE_NUMERIC:
+							rowData.add(cell.getNumericCellValue());
+							break;
+						case Cell.CELL_TYPE_STRING:
+							rowData.add(cell.getStringCellValue());
+							break;
+						default:
+							rowData.add(cell.getStringCellValue());
+							break;
+						}
 					}
 				}
 				Object[] rowDataObject = new Object[rowData.size()];
 				rowData.toArray(rowDataObject);
 				results.add(rowDataObject);
-				System.out.println("");
 			}
 			newExcelFormatFile.close();
 			FileOutputStream out = new FileOutputStream(new File("src/main/resources/excel-output.xlsx"));
@@ -424,10 +519,12 @@ public class DataHelper {
 	 * @param fileLocation
 	 * @param fileName
 	 * @param hasLabels
+	 * @param dataTypes
 	 * @return
 	 * @throws IOException
 	 */
-	private static ArrayList<Object> getNewExcelFileResults(String fileLocation, String fileName, Boolean hasLabels) {
+	private static ArrayList<Object> getNewExcelFileResults(String fileLocation, String fileName, Boolean hasLabels,
+			DataType[] dataTypes) {
 		ArrayList<Object> data = null;
 		String fullFilePath = fileLocation + fileName;
 		InputStream newExcelFormatFile;
@@ -436,7 +533,7 @@ public class DataHelper {
 			ArrayList<Object> results = new ArrayList<Object>();
 			Workbook workbook = new XSSFWorkbook(newExcelFormatFile);
 			Sheet sheet = workbook.getSheetAt(0);
-			data = collectExcelData(hasLabels, newExcelFormatFile, results, workbook, sheet);
+			data = collectExcelData(hasLabels, newExcelFormatFile, results, workbook, sheet, dataTypes);
 		} catch (FileNotFoundException e) {
 			System.out.println("File Not Found");
 		} catch (IOException e) {
@@ -452,9 +549,11 @@ public class DataHelper {
 	 * @param fileLocation
 	 * @param fileName
 	 * @param hasLabels
+	 * @param dataTypes
 	 * @return
 	 */
-	private static ArrayList<Object> getOldExcelFileResults(String fileLocation, String fileName, Boolean hasLabels) {
+	private static ArrayList<Object> getOldExcelFileResults(String fileLocation, String fileName, Boolean hasLabels,
+			DataType[] dataTypes) {
 		ArrayList<Object> data = null;
 		String fullFilePath = fileLocation + fileName;
 		InputStream newExcelFormatFile;
@@ -463,7 +562,7 @@ public class DataHelper {
 			ArrayList<Object> results = new ArrayList<Object>();
 			Workbook workbook = new HSSFWorkbook(newExcelFormatFile);
 			Sheet sheet = workbook.getSheetAt(0);
-			data = collectExcelData(hasLabels, newExcelFormatFile, results, workbook, sheet);
+			data = collectExcelData(hasLabels, newExcelFormatFile, results, workbook, sheet, dataTypes);
 		} catch (FileNotFoundException e) {
 			System.out.println("File Not Found");
 		} catch (IOException e) {
@@ -522,7 +621,7 @@ public class DataHelper {
 		if (hasLabels) {
 			lines.remove(0);
 		}
-		String pattern = "(,*)([a-zA-Z0-9\\s-]+)(,*)";
+		String pattern = "(,*)([a-zA-Z0-9\\s-.&®\\]+)(,*)";
 		Pattern r = Pattern.compile(pattern);
 		for (int i = 0; i < lines.size(); i++) {
 			int curDataType = 0;
@@ -533,7 +632,8 @@ public class DataHelper {
 					try {
 						curMatches.add(convertDataType(m.group(2).trim(), dataTypes[curDataType]));
 					} catch (Exception e) {
-						// System.out.println("DataTypes provided do not match
+						// System.out.println("DataTypes
+						// provided do not match
 						// parsed data results.");
 					}
 				} else {
@@ -558,7 +658,8 @@ public class DataHelper {
 	 * @return
 	 */
 	private static Object[][] parseJSONData(ArrayList<String> lines, Boolean hasLabels) {
-		// TODO Create an implementation to handle JSON formatted documents
+		// TODO Create an implementation to handle JSON
+		// formatted documents
 		return null;
 	}
 
@@ -570,7 +671,8 @@ public class DataHelper {
 	 * @return
 	 */
 	private static Object[][] parseTabData(ArrayList<String> lines, Boolean hasLabels) {
-		// TODO Create an implementation to handle Tab formatted documents
+		// TODO Create an implementation to handle Tab
+		// formatted documents
 		return null;
 	}
 
@@ -582,7 +684,8 @@ public class DataHelper {
 	 * @return
 	 */
 	private static Object[][] parseXMLData(ArrayList<String> lines, Boolean hasLabels) {
-		// TODO Create an implementation to handle XML formatted documents
+		// TODO Create an implementation to handle XML
+		// formatted documents
 		return null;
 	}
 }
