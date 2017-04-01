@@ -1,5 +1,5 @@
-# Basic Project
-## Basic Project Structure
+# Zillow Project
+## Zillow Project Structure
 
 *Default Structure for A Basic Project*
 
